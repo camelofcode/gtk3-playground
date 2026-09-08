@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "*.ui": "xml"
+    },
+    "xml.fileAssociations": [
+        {
+            "pattern": "**/*.ui",
+            "systemId": "/usr/share/gtk-3.0/gtkbuilder.rng"
+        }
+    ],
+    "clangd.arguments": [
+        "--compile-commands-dir=${workspaceFolder}/builddir"
+    ]   
+}

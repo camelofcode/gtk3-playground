@@ -1,0 +1,14 @@
+/builddir/
+/.cache/
+
+*.d
+*.o
+*.obj
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+*.dSYM/
