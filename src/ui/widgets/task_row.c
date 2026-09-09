@@ -1,4 +1,5 @@
 #include "task_row.h"
+#include "gtk/gtk.h"
 
 enum {
     PROP_0,
@@ -37,9 +38,20 @@ static void task_row_update_appearance(TaskRow *self) {
 
     gtk_label_set_text(self->text_label, self->text);
 
+    GtkStyleContext *style_context =
+        gtk_widget_get_style_context((GtkWidget *)self);
+    char *complete_class = "complete";
+
     if (self->done) {
         attributes = pango_attr_list_new();
         pango_attr_list_insert(attributes, pango_attr_strikethrough_new(TRUE));
+
+        if (!gtk_style_context_has_class(style_context, complete_class))
+            gtk_style_context_add_class(style_context, complete_class);
+
+    } else {
+        if (gtk_style_context_has_class(style_context, complete_class))
+            gtk_style_context_remove_class(style_context, complete_class);
     }
 
     gtk_label_set_attributes(self->text_label, attributes);
