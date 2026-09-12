@@ -10,6 +10,8 @@ project(
 
 gtk = dependency('gtk+-3.0', version: '>=3.24')
 
+json_glib = dependency('json-glib-1.0', version: '>=1.6')
+
 gnome = import('gnome')
 
 resources = gnome.compile_resources(
@@ -20,6 +22,8 @@ resources = gnome.compile_resources(
 
 sources = files(
   'src/main.c',
+  'src/core/task.c',
+  'src/core/task_storage.c',
   'src/ui/windows/main_window.c',
   'src/ui/windows/text_binding_window.c',
   'src/ui/windows/task_list_window.c',
@@ -30,6 +34,33 @@ executable(
   'gtk3-playground',
   sources,
   resources,
-  dependencies: gtk,
+  dependencies: [gtk, json_glib],
   export_dynamic: true,
 )
+
+storage_test = executable(
+  'task-storage-test',
+  'tests/task_storage_test.c',
+  'src/core/task.c',
+  'src/core/task_storage.c',
+  include_directories: include_directories('.'),
+  dependencies: json_glib,
+)
+test('task-storage', storage_test)
+
+window_test = executable(
+  'task-window-test',
+  'tests/task_window_test.c',
+  'src/core/task.c',
+  'src/core/task_storage.c',
+  'src/ui/widgets/task_row.c',
+  'src/ui/windows/task_list_window.c',
+  'src/ui/windows/main_window.c',
+  'src/ui/windows/text_binding_window.c',
+  resources,
+  export_dynamic: true,
+  include_directories: include_directories('.'),
+  dependencies: [gtk, json_glib],
+)
+# Requires a display; skipped automatically when one is unavailable.
+test('task-window', window_test, env: ['G_DEBUG=fatal-warnings'])
