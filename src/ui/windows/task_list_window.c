@@ -1,6 +1,7 @@
 #include "task_list_window.h"
 
 #include "src/core/task_storage.h"
+#include "src/ui/error_dialog.h"
 #include "src/ui/widgets/task_row.h"
 
 typedef struct {
@@ -10,28 +11,6 @@ typedef struct {
     gchar *path;
     gboolean writable;
 } TaskListWindowData;
-
-static void show_error(
-    GtkWindow *parent,
-    const gchar *action,
-    GError *error
-) {
-    GtkWidget *dialog = gtk_message_dialog_new(
-        parent,
-        GTK_DIALOG_MODAL,
-        GTK_MESSAGE_ERROR,
-        GTK_BUTTONS_CLOSE,
-        "%s",
-        action
-    );
-    gtk_message_dialog_format_secondary_text(
-        GTK_MESSAGE_DIALOG(dialog),
-        "%s",
-        error->message
-    );
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
-}
 
 static gboolean save_tasks(
     TaskListWindowData *data,
@@ -55,8 +34,9 @@ static void on_shutdown(
 ) {
     (void)app;
     g_autoptr(GError) error = NULL;
-    if (!save_tasks(data, &error))
-        show_error(NULL, "Could not save tasks", error);
+    if (!save_tasks(data, &error)) {
+        ui_show_error(NULL, "Could not save tasks", error);
+    }
 }
 
 static void on_task_delete_requested(
@@ -126,7 +106,7 @@ static void on_task_input_activate(
     add_task(data);
 }
 
-gboolean on_task_list_window_delete_event(
+static gboolean on_task_list_window_delete_event(
     GtkWidget *widget,
     GdkEvent *event,
     gpointer user_data
@@ -138,7 +118,7 @@ gboolean on_task_list_window_delete_event(
         g_object_get_data(G_OBJECT(widget), "task-list-window-data");
     g_autoptr(GError) error = NULL;
     if (!save_tasks(data, &error)) {
-        show_error(GTK_WINDOW(widget), "Could not save tasks", error);
+        ui_show_error(GTK_WINDOW(widget), "Could not save tasks", error);
         return TRUE;
     }
     return gtk_widget_hide_on_delete(widget);
@@ -167,7 +147,7 @@ void task_list_window_init(
     data->writable = data->tasks != NULL;
     if (!data->writable) {
         data->tasks = g_list_store_new(TASK_TYPE_ITEM);
-        show_error(
+        ui_show_error(
             main_window,
             "Could not load tasks. Editing is disabled to protect the saved "
             "file.",
@@ -178,6 +158,12 @@ void task_list_window_init(
     }
     g_object_set_data_full(G_OBJECT(app), "task-list-data", data, free_data);
     g_object_set_data(G_OBJECT(window), "task-list-window-data", data);
+    g_signal_connect(
+        window,
+        "delete-event",
+        G_CALLBACK(on_task_list_window_delete_event),
+        NULL
+    );
     g_signal_connect(app, "shutdown", G_CALLBACK(on_shutdown), data);
     gtk_list_box_bind_model(
         data->list,

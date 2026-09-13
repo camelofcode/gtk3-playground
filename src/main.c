@@ -48,13 +48,6 @@ static void activate(
         g_error("Failed to load UI: %s", error->message);
     }
 
-    /*
-     * GTK 3 resolves the signal handler names in main.ui from exported
-     * symbols in this executable. Meson's export_dynamic option makes those
-     * symbols available to GtkBuilder.
-     */
-    gtk_builder_connect_signals(builder, NULL);
-
     text_binding_window_init(builder, app);
     main_window_init(builder, app);
     task_list_window_init(builder, app);

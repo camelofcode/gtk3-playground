@@ -24,11 +24,6 @@
         <child>
           <object class="GtkToggleButton" id="done_button">
             <property name="relief">none</property>
-            <signal
-              name="toggled"
-              handler="task_row_on_done_toggled"
-              swapped="no"
-            />
             <child>
               <object class="GtkImage" id="done_image">
                 <property name="icon-name">object-select-symbolic</property>
@@ -40,11 +35,6 @@
           <object class="GtkButton" id="delete_button">
             <property name="relief">none</property>
             <property name="tooltip-text">Delete task</property>
-            <signal
-              name="clicked"
-              handler="task_row_on_delete_clicked"
-              swapped="no"
-            />
             <child>
               <object class="GtkImage">
                 <property name="icon-name">user-trash-symbolic</property>

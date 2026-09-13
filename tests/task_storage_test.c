@@ -1,3 +1,4 @@
+#include "src/core/task.h"
 #include "src/core/task_storage.h"
 #include <glib/gstdio.h>
 
