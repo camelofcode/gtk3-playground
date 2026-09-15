@@ -9,7 +9,7 @@ static void load_css(void) {
 
     gtk_css_provider_load_from_resource(
         provider,
-        "/com/camelofdoom/gtk3-playground/resources/app.css"
+        "/com/camelofdoom/gtk3-playground/ui/app.css"
     );
 
     gtk_style_context_add_provider_for_screen(
@@ -40,12 +40,15 @@ static void activate(
 
     builder = gtk_builder_new();
 
-    if (!gtk_builder_add_from_resource(
-            builder,
-            "/com/camelofdoom/gtk3-playground/resources/main.ui",
-            &error
-        )) {
-        g_error("Failed to load UI: %s", error->message);
+    const char *window_resources[] = {
+        "/com/camelofdoom/gtk3-playground/ui/windows/main-window.ui",
+        "/com/camelofdoom/gtk3-playground/ui/windows/text-binding-window.ui",
+        "/com/camelofdoom/gtk3-playground/ui/windows/task-list-window.ui",
+    };
+    for (guint i = 0; i < G_N_ELEMENTS(window_resources); i++) {
+        if (!gtk_builder_add_from_resource(builder, window_resources[i], &error)) {
+            g_error("Failed to load UI %s: %s", window_resources[i], error->message);
+        }
     }
 
     text_binding_window_init(builder, app);
