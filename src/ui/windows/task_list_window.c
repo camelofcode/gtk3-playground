@@ -5,6 +5,9 @@
 #include "src/ui/gtk_helpers.h"
 #include "src/ui/widgets/task_row.h"
 
+static const char TASK_LIST_DATA_KEY[] = "task-list-data";
+static const char TASK_LIST_WINDOW_DATA_KEY[] = "task-list-window-data";
+
 typedef struct {
     GtkEntry *input;
     GtkListBox *list;
@@ -81,20 +84,11 @@ static void add_task(TaskListWindowData *data) {
     g_free(text);
 }
 
-static void on_add_task_button_clicked(
-    GtkButton *button,
+static void on_add_task_requested(
+    GtkWidget *widget,
     TaskListWindowData *data
 ) {
-    (void)button;
-
-    add_task(data);
-}
-
-static void on_task_input_activate(
-    GtkEntry *entry,
-    TaskListWindowData *data
-) {
-    (void)entry;
+    (void)widget;
 
     add_task(data);
 }
@@ -108,12 +102,14 @@ static gboolean on_task_list_window_delete_event(
     (void)user_data;
 
     TaskListWindowData *data =
-        g_object_get_data(G_OBJECT(widget), "task-list-window-data");
+        g_object_get_data(G_OBJECT(widget), TASK_LIST_WINDOW_DATA_KEY);
+
     g_autoptr(GError) error = NULL;
     if (!save_tasks(data, &error)) {
         ui_show_error(GTK_WINDOW(widget), "Could not save tasks", error);
         return TRUE;
     }
+
     return gtk_widget_hide_on_delete(widget);
 }
 
@@ -133,8 +129,8 @@ void task_list_window_init(
     data = g_new0(TaskListWindowData, 1);
     data->input = GTK_ENTRY(gtk_builder_get_object(builder, "task_input"));
     data->list = GTK_LIST_BOX(gtk_builder_get_object(builder, "task_list"));
-
     data->path = task_storage_default_path();
+
     g_autoptr(GError) error = NULL;
     data->tasks = task_storage_load(data->path, &error);
     data->writable = data->tasks != NULL;
@@ -149,15 +145,10 @@ void task_list_window_init(
         gtk_widget_set_sensitive(GTK_WIDGET(data->input), FALSE);
         gtk_widget_set_sensitive(GTK_WIDGET(add_button), FALSE);
     }
-    g_object_set_data_full(G_OBJECT(app), "task-list-data", data, free_data);
-    g_object_set_data(G_OBJECT(window), "task-list-window-data", data);
-    g_signal_connect(
-        window,
-        "delete-event",
-        G_CALLBACK(on_task_list_window_delete_event),
-        NULL
-    );
-    g_signal_connect(app, "shutdown", G_CALLBACK(on_shutdown), data);
+
+    g_object_set_data_full(G_OBJECT(app), TASK_LIST_DATA_KEY, data, free_data);
+    g_object_set_data(G_OBJECT(window), TASK_LIST_WINDOW_DATA_KEY, data);
+
     gtk_list_box_bind_model(
         data->list,
         G_LIST_MODEL(data->tasks),
@@ -167,15 +158,25 @@ void task_list_window_init(
     );
 
     g_signal_connect(
+        window,
+        "delete-event",
+        G_CALLBACK(on_task_list_window_delete_event),
+        NULL
+    );
+
+    g_signal_connect(app, "shutdown", G_CALLBACK(on_shutdown), data);
+
+    g_signal_connect(
         add_button,
         "clicked",
-        G_CALLBACK(on_add_task_button_clicked),
+        G_CALLBACK(on_add_task_requested),
         data
     );
+
     g_signal_connect(
         data->input,
         "activate",
-        G_CALLBACK(on_task_input_activate),
+        G_CALLBACK(on_add_task_requested),
         data
     );
 
