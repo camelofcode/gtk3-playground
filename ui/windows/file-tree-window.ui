@@ -5,7 +5,7 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkWindow" id="file_tree_window">
     <property name="default-height">600</property>
-    <property name="default-width">400</property>
+    <property name="default-width">800</property>
     <property name="title">File Tree</property>
         <child>
           <object class="GtkBox" id="file_tree_window_box">
@@ -37,6 +37,29 @@
                     </child>
                   </object>
                 </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="file_tree_status_box">
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkSpinner" id="file_tree_spinner">
+                    <property name="no-show-all">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="file_tree_status_label">
+                    <property name="halign">start</property>
+                    <property name="label">Choose a folder to load its contents</property>
+                    <property name="selectable">True</property>
+                    <property name="xalign">0</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="file_tree_view_container">
+                <property name="vexpand">True</property>
               </object>
             </child>
           </object>
