@@ -2,8 +2,9 @@
 <!DOCTYPE cambalache-project SYSTEM "cambalache-project.dtd">
 <!-- Created with Cambalache 1.0.3 -->
 <cambalache-project version="1.0.0" target_tk="gtk+-3.0">
-  <ui filename="../ui/windows/main-window.ui" sha256="bb87a4080acd55a434b37413f3742d8b2465f9bc81980b2bf76557365b63bce2"/>
-  <ui filename="../ui/windows/text-binding-window.ui" sha256="427118f5ad0eea9ab93509ca11adc1d3dfa6d566b83a4cf40242278387321bdc"/>
-  <ui filename="../ui/windows/task-list-window.ui" sha256="d1ada85cd85731ee0692ca250ed6f522bf0b0c8818a75f396114a08abe667087"/>
-  <ui filename="../ui/widgets/task-row.ui" sha256="391c34a680ee81afc10c6ebcfd892c64371c89d2e1c35a645846e92c4173c639"/>
+  <ui filename="../ui/windows/main-window.ui" sha256="4324ac95a224f3a10e0eeb02aee12e751a9b3c7891b03530e56175b9d671bbeb"/>
+  <ui filename="../ui/windows/text-binding-window.ui" sha256="362585aa54e55ffa63822a919e9c3f7595930ee31b81247a737250d3fac8238c"/>
+  <ui filename="../ui/windows/task-list-window.ui" sha256="ece9f5b2be7cd00230a6bdab723145caac370d6abb0599bea2e846c6339a4dbe"/>
+  <ui filename="../ui/windows/file-tree-window.ui" sha256="f7608367cf9ec2ba443a55a20b41195aa97d5ce01f8ad16801ecca984081000a"/>
+  <ui filename="../ui/widgets/task-row.ui" sha256="c735026eb291ff47a5b2827f2eb626cc52945c6da60f538f586d877d11d7fe5b"/>
 </cambalache-project>

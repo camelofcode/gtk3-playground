@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 1.0.3 -->
+<interface>
+  <!-- interface-name file-tree.ui -->
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkWindow" id="file_tree_window">
+    <property name="default-height">600</property>
+    <property name="default-width">400</property>
+    <property name="title">File Tree</property>
+        <child>
+          <object class="GtkBox" id="file_tree_window_box">
+            <property name="margin-bottom">20</property>
+            <property name="margin-end">20</property>
+            <property name="margin-start">20</property>
+            <property name="margin-top">20</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">10</property>
+            <child>
+              <object class="GtkBox" id="folder_chooser_box">
+                <style>
+                  <class name="linked"/>
+                </style>
+                <child>
+                  <object class="GtkEntry" id="folder_path_entry">
+                    <property name="editable">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="placeholder-text">No folder selected</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="folder_browse_button">
+                    <property name="tooltip-text">Browse for a folder</property>
+                    <child>
+                      <object class="GtkImage" id="folder_browse_image">
+                        <property name="icon-name">folder-open-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+  </object>
+</interface>

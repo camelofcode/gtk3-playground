@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 1.0.3 -->
 <interface>
+  <!-- interface-name main-window.ui -->
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkWindow" id="main_window">
     <property name="default-height">300</property>
@@ -21,6 +23,11 @@
         <child>
           <object class="GtkButton" id="open_task_list_window_button">
             <property name="label">Task List</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="open_file_tree_window_button">
+            <property name="label">File Tree</property>
           </object>
         </child>
       </object>
