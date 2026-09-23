@@ -96,9 +96,8 @@ static void activate_test(
         gdk_event_free(event);
         g_assert_true(handled);
         g_assert_false(gtk_widget_get_visible(window));
-        g_autofree gchar *path = task_storage_default_path();
         g_autoptr(GError) error = NULL;
-        g_autoptr(GListStore) saved = task_storage_load(path, &error);
+        g_autoptr(GListStore) saved = task_storage_load(&error);
         g_assert_no_error(error);
         g_assert_cmpuint(g_list_model_get_n_items(G_LIST_MODEL(saved)), ==, 1);
         gtk_widget_show_all(window);
@@ -159,9 +158,10 @@ int main(
         g_signal_connect(app, "activate", G_CALLBACK(activate_test), NULL);
         g_assert_cmpint(g_application_run(G_APPLICATION(app), 0, NULL), ==, 0);
     }
-    g_autofree gchar *path = task_storage_default_path();
+    g_autofree gchar *path =
+        g_build_filename(directory, "gtk3-playground", "tasks.json", NULL);
     g_autoptr(GError) error = NULL;
-    g_autoptr(GListStore) saved = task_storage_load(path, &error);
+    g_autoptr(GListStore) saved = task_storage_load(&error);
     g_assert_no_error(error);
     g_assert_cmpuint(g_list_model_get_n_items(G_LIST_MODEL(saved)), ==, 1);
     g_autoptr(Task) remaining = g_list_model_get_item(G_LIST_MODEL(saved), 0);
