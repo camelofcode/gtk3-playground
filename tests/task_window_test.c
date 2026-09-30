@@ -1,5 +1,6 @@
 #include "src/core/task_storage.h"
 #include "src/ui/widgets/task_row.h"
+#include "src/ui/windows/articles_window.h"
 #include "src/ui/windows/file_tree_window.h"
 #include "src/ui/windows/main_window.h"
 #include "src/ui/windows/task_list_window.h"
@@ -8,6 +9,14 @@
 #include <gtk/gtk.h>
 
 static guint run_number;
+
+static void mark_destroyed(
+    GtkWidget *widget,
+    gboolean *destroyed
+) {
+    (void)widget;
+    *destroyed = TRUE;
+}
 
 static void activate_test(
     GtkApplication *app,
@@ -20,6 +29,7 @@ static void activate_test(
         "/com/camelofdoom/gtk3-playground/ui/windows/text-binding-window.ui",
         "/com/camelofdoom/gtk3-playground/ui/windows/task-list-window.ui",
         "/com/camelofdoom/gtk3-playground/ui/windows/file-tree-window.ui",
+        "/com/camelofdoom/gtk3-playground/ui/windows/articles-window.ui",
     };
     for (guint i = 0; i < G_N_ELEMENTS(window_resources); i++) {
         g_autoptr(GError) build_error = NULL;
@@ -34,8 +44,38 @@ static void activate_test(
     main_window_init(builder, app);
     task_list_window_init(builder, app);
     file_tree_window_init(builder, app);
+    articles_window_init(builder, app);
     GtkWidget *main_window =
         GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
+    GtkWindow *articles_window =
+        GTK_WINDOW(gtk_builder_get_object(builder, "articles_window"));
+    gboolean articles_destroyed = FALSE;
+    g_signal_connect(
+        articles_window,
+        "destroy",
+        G_CALLBACK(mark_destroyed),
+        &articles_destroyed
+    );
+    g_assert_true(
+        gtk_window_get_transient_for(articles_window) == GTK_WINDOW(main_window)
+    );
+    g_assert_true(gtk_window_get_destroy_with_parent(articles_window));
+    g_signal_emit_by_name(
+        gtk_builder_get_object(builder, "open_articles_window_button"),
+        "clicked"
+    );
+    g_assert_true(gtk_widget_get_visible(GTK_WIDGET(articles_window)));
+    gboolean articles_handled = FALSE;
+    GdkEvent *articles_event = gdk_event_new(GDK_DELETE);
+    g_signal_emit_by_name(
+        articles_window,
+        "delete-event",
+        articles_event,
+        &articles_handled
+    );
+    gdk_event_free(articles_event);
+    g_assert_true(articles_handled);
+    g_assert_false(gtk_widget_get_visible(GTK_WIDGET(articles_window)));
     GtkWidget *window =
         GTK_WIDGET(gtk_builder_get_object(builder, "task_list_window"));
     GtkEntry *input = GTK_ENTRY(gtk_builder_get_object(builder, "task_input"));
@@ -137,6 +177,10 @@ static void activate_test(
         g_assert_null(gtk_list_box_get_row_at_index(list, 1));
     }
     gtk_widget_destroy(main_window);
+    g_assert_true(articles_destroyed);
+    while (g_main_context_pending(NULL)) {
+        g_main_context_iteration(NULL, FALSE);
+    }
 }
 
 int main(
@@ -146,6 +190,7 @@ int main(
     g_autofree gchar *directory =
         g_dir_make_tmp("gtk3-window-test-XXXXXX", NULL);
     g_setenv("XDG_DATA_HOME", directory, TRUE);
+    g_setenv("ARTICLES_API_BASE_URL", "not a valid URL", TRUE);
     if (!gtk_init_check(&argc, &argv)) {
         g_rmdir(directory);
         return 77;

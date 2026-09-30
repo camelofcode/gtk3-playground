@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 
 #include "src/ui/windows/file_tree_window.h"
+#include "src/ui/windows/articles_window.h"
 #include "src/ui/windows/main_window.h"
 #include "src/ui/windows/task_list_window.h"
 #include "src/ui/windows/text_binding_window.h"
@@ -46,6 +47,7 @@ static void activate(
         "/com/camelofdoom/gtk3-playground/ui/windows/text-binding-window.ui",
         "/com/camelofdoom/gtk3-playground/ui/windows/task-list-window.ui",
         "/com/camelofdoom/gtk3-playground/ui/windows/file-tree-window.ui",
+        "/com/camelofdoom/gtk3-playground/ui/windows/articles-window.ui",
     };
     for (guint i = 0; i < G_N_ELEMENTS(window_resources); i++) {
         if (!gtk_builder_add_from_resource(
@@ -65,6 +67,7 @@ static void activate(
     main_window_init(builder, app);
     task_list_window_init(builder, app);
     file_tree_window_init(builder, app);
+    articles_window_init(builder, app);
 
     g_object_unref(builder);
 }
