@@ -1,6 +1,6 @@
 #include "src/core/task_storage.h"
 #include "src/ui/widgets/task_row.h"
-#include "src/ui/windows/articles_window.h"
+#include "src/ui/windows/articles_window/articles_window.h"
 #include "src/ui/windows/file_tree_window.h"
 #include "src/ui/windows/main_window.h"
 #include "src/ui/windows/task_list_window.h"
@@ -76,6 +76,11 @@ static void activate_test(
     gdk_event_free(articles_event);
     g_assert_true(articles_handled);
     g_assert_false(gtk_widget_get_visible(GTK_WIDGET(articles_window)));
+    g_signal_emit_by_name(
+        gtk_builder_get_object(builder, "open_articles_window_button"),
+        "clicked"
+    );
+    g_assert_true(gtk_widget_get_visible(GTK_WIDGET(articles_window)));
     GtkWidget *window =
         GTK_WIDGET(gtk_builder_get_object(builder, "task_list_window"));
     GtkEntry *input = GTK_ENTRY(gtk_builder_get_object(builder, "task_input"));

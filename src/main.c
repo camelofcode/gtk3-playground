@@ -1,7 +1,7 @@
 #include <gtk/gtk.h>
 
+#include "src/ui/windows/articles_window/articles_window.h"
 #include "src/ui/windows/file_tree_window.h"
-#include "src/ui/windows/articles_window.h"
 #include "src/ui/windows/main_window.h"
 #include "src/ui/windows/task_list_window.h"
 #include "src/ui/windows/text_binding_window.h"

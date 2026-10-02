@@ -43,17 +43,15 @@ static void image_request_free(ImageRequest *request) {
 }
 
 static void image_loaded(
-    GObject *source,
-    GAsyncResult *result,
+    ArticlesApi *api,
+    GdkPixbuf *pixbuf,
+    const GError *error,
     gpointer user_data
 ) {
+    (void)api;
+    (void)error;
+
     ImageRequest *request = user_data;
-    g_autoptr(GError) error = NULL;
-    g_autoptr(GdkPixbuf) pixbuf = articles_api_download_image_finish(
-        ARTICLES_API(source),
-        result,
-        &error
-    );
 
     g_autoptr(GtkImage) image = g_weak_ref_get(&request->image);
     if (!image || gtk_widget_in_destruction(GTK_WIDGET(image))) {
